@@ -67,12 +67,24 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
   foreach ($form_state['field'] as $field_name => $values) {
     foreach ($values as $lang => $value) {
       $instance = $value['instance'];
-      if (empty($instance['settings']['behaviors']['prepopulate']['status']) || $instance['settings']['behaviors']['prepopulate']['fallback'] != 'form_error') {
+      if (empty($instance['settings']['behaviors']['prepopulate']['status'])) {
+        continue;
+      }
+      $settings = $instance['settings']['behaviors']['prepopulate'];
+      if (!in_array($settings['fallback'], array('form_error', 'redirect'))) {
         continue;
       }
       $field = $value['field'];
-      if (!entityreference_prepopulate_get_values_from_url($field, $instance)) {
-        form_error($form, t('Field @label must be populated via URL', array('@label' => $instance['label'])));
+      if (entityreference_prepopulate_get_values_from_url($field, $instance)) {
+        continue;
+      }
+      $message = t('Field @label must be populated via URL', array('@label' => $instance['label']));
+      if ($settings['fallback'] == 'form_error') {
+        form_error($form, $message);
+      }
+      if ($settings['fallback'] == 'redirect') {
+        drupal_set_message($message, 'notice');
+        drupal_goto();
       }
     }
   }
