@@ -52,11 +52,10 @@ function entityreference_prepopulate_field_update_instance($instance, $prior_ins
  *
  * Set the default from the URL context. This works even if the widget is
  * not shown, e.g. due to restricted field access.
- *
- * @see entityreference_field_info()
  */
 function entityreference_prepopulate_field_default_value($entity_type, $entity, $field, $instance, $langcode) {
   if ($items = entityreference_prepopulate_get_values_from_url($field, $instance)) {
+    // TODO: Check field cardinality.
     return $items;
   }
 }
@@ -87,8 +86,8 @@ function entityreference_prepopulate_field_access($op, $field, $entity_type, $en
   if (!empty($items) && !empty($settings['hide'])) {
     return FALSE;
   }
-  if (empty($items) && $settings['fallback'] = 'hide') {
-    return;
+  elseif (empty($items) && $settings['fallback'] = 'hide') {
+    return FALSE;
   }
 }
 
