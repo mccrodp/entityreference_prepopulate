@@ -71,18 +71,21 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
         continue;
       }
       $settings = $instance['settings']['behaviors']['prepopulate'];
-      if (!in_array($settings['fallback'], array('form_error', 'redirect'))) {
+      if (!in_array($settings['fallback'], array('form_error', 'redirect')) && $settings['action'] != 'disable') {
         continue;
       }
       $field = $value['field'];
       if (entityreference_prepopulate_get_values_from_url($field, $instance)) {
+        if ($settings['action'] == 'disable') {
+          $form[$field_name][$lang]['#disabled'] = TRUE;
+        }
         continue;
       }
       $message = t('Field @label must be populated via URL', array('@label' => $instance['label']));
       if ($settings['fallback'] == 'form_error') {
         form_error($form, $message);
       }
-      if ($settings['fallback'] == 'redirect') {
+      elseif ($settings['fallback'] == 'redirect') {
         drupal_set_message($message, 'notice');
         drupal_goto();
       }
