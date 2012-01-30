@@ -6,10 +6,14 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
    * Generate a settings form for this handler.
    */
   public function settingsForm() {
-    $form['hide'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Hide field'),
-      '#description' => t('Hide the field when prepopulating field with values via URL.'),
+    $form['action'] = array(
+      '#type' => 'select',
+      '#title' => t('Action'),
+      '#options' => array(
+        'hide' => t('Hide field'),
+        'disable' => t('Disable field'),
+      ),
+      '#description' => t('Action to take when prepopulating field with values via URL.'),
     );
     $form['fallback'] = array(
       '#type' => 'select',
@@ -18,8 +22,8 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
       '#options' => array(
         'none' => t('Do nothing'),
         'hide' => t('Hide field'),
-        'error' => t('Set form error'),
-        'widget' => t('Replace widget'),
+        'form_error' => t('Set form error'),
+        'replace_widget' => t('Replace widget'),
         'redirect' => t('Redirect'),
       ),
     );
