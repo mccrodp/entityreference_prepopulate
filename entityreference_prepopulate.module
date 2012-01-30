@@ -135,5 +135,6 @@ function entityreference_prepopulate_get_values_from_url($field, $instance) {
       $items[] = array('target_id' => $id);
     }
   }
+  $cache[$identifier] = $items;
   return $items;
 }
