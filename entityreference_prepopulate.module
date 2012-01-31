@@ -64,6 +64,11 @@ function entityreference_prepopulate_field_default_value($entity_type, $entity, 
  * Implements hook_field_attach_form().
  */
 function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$form, &$form_state, $langcode) {
+  list($id,,$bundle) = entity_extract_ids($entity_type, $entity);
+  if ($id) {
+    // Entity is already saved.
+    return;
+  }
   foreach ($form_state['field'] as $field_name => $values) {
     foreach ($values as $lang => $value) {
       $instance = $value['instance'];
@@ -107,7 +112,12 @@ function entityreference_prepopulate_field_access($op, $field, $entity_type, $en
     return;
   }
 
-  list(,,$bundle) = entity_extract_ids($entity_type, $entity);
+  list($id,,$bundle) = entity_extract_ids($entity_type, $entity);
+  if ($id) {
+    // Entity is already saved.
+    return;
+  }
+
   $instance = field_info_instance($entity_type, $field['field_name'], $bundle);
   if (empty($instance['settings']['behaviors']['prepopulate']['status'])) {
     return;
