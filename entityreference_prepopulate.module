@@ -76,6 +76,11 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
         continue;
       }
       $settings = $instance['settings']['behaviors']['prepopulate'];
+
+      if (!empty($settings['skip_perm']) && user_access($settings['skip_perm'])) {
+        continue;
+      }
+
       if (!in_array($settings['fallback'], array('form_error', 'redirect')) && $settings['action'] != 'disable') {
         continue;
       }
@@ -124,6 +129,9 @@ function entityreference_prepopulate_field_access($op, $field, $entity_type, $en
   }
 
   $settings = $instance['settings']['behaviors']['prepopulate'];
+  if (!empty($settings['skip_perm']) && user_access($settings['skip_perm'])) {
+    return;
+  }
   $items = entityreference_prepopulate_get_values_from_url($field, $instance);
 
   if (!empty($items) && $settings['action'] == 'hide') {

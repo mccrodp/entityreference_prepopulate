@@ -26,6 +26,25 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
         'redirect' => t('Redirect'),
       ),
     );
+
+    // Get list of permissions.
+    $perms = array();
+    foreach (module_list(FALSE, FALSE, TRUE) as $module) {
+      // By keeping them keyed by module we can use optgroups with the
+      // 'select' type.
+      if ($permissions = module_invoke($module, 'permission')) {
+        foreach ($permissions as $id => $permission) {
+          $perms[$module][$id] = $permission['title'];
+        }
+      }
+    }
+
+    $form['skip_perm'] = array(
+      '#type' => 'select',
+      '#title' => t('Skip access permission'),
+      '#description' => t('Set a permission that will not be effected by the fallback behavior.'),
+      '#options' => $perms,
+    );
     return $form;
   }
 }
