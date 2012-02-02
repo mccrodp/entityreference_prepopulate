@@ -42,7 +42,7 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
     $form['skip_perm'] = array(
       '#type' => 'select',
       '#title' => t('Skip access permission'),
-      '#description' => t('Set a permission that will not be effected by the fallback behavior.'),
+      '#description' => t('Set a permission that will not be affected by the fallback behavior.'),
       '#options' => $perms,
     );
     return $form;
