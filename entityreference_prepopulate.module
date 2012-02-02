@@ -69,6 +69,14 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
     // Entity is already saved.
     return;
   }
+
+  if (!empty($form_state['triggering_element']['#ajax'])) {
+    // We are inside AJAX, so values can't be taken from URL at the
+    // moment.
+    return;
+  }
+
+
   foreach ($form_state['field'] as $field_name => $values) {
     foreach ($values as $lang => $value) {
       $instance = $value['instance'];
