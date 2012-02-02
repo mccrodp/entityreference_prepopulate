@@ -76,9 +76,8 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
     return;
   }
 
-
-  foreach ($form_state['field'] as $field_name => $values) {
-    foreach ($values as $lang => $value) {
+  foreach (element_children($form_state['field']) as $field_name) {
+    foreach ($form_state['field'][$field_name] as $lang => $value) {
       $instance = $value['instance'];
       if (empty($instance['settings']['behaviors']['prepopulate']['status'])) {
         continue;
