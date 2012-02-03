@@ -9,7 +9,7 @@
  * Implements hook_ctools_plugin_directory().
  */
 function entityreference_prepopulate_ctools_plugin_directory($module, $plugin) {
-  if ($module == 'entityreference') {
+  if ($module == 'entityreference' || $module == 'ctools') {
     return 'plugins/' . $plugin;
   }
 }
@@ -209,4 +209,71 @@ function entityreference_prepopulate_get_values_from_url($field, $instance) {
   }
   $cache[$identifier] = $items;
   return $items;
+}
+
+/**
+ * Return a form element with crafted links to create nodes for a group.
+ *
+ * @param $entity_type
+ *   The entity type of the referenced entity.
+ * @param $entity_id
+ *   The entity ID of the referenced entity.
+ * @param $destination
+ *   Optional; The destination after a node is created. Defaults to the
+ *   destination passed in the URL if exists, otherwise back to the current
+ *   page.
+ * @param $types
+ *   Optional; An array of type names. Restrict the created links to the given
+ *   types.
+ */
+function entityreference_prepopulate_create_node_links($entity_type, $entity_id, $field_name, $destination = NULL, $types = NULL) {
+  $wrapper = entity_metadata_wrapper($entity_type, $entity_id);
+  $field = field_info_field($field_name);
+
+  $types = isset($types) ? $types : array_keys(node_type_get_types());
+  $names = array();
+  foreach ($types as $type_name) {
+    if (!empty($field['settings']['handler_settings']['target_bundles']) && !in_array($type_name, $field['settings']['handler_settings']['target_bundles'])) {
+      // The node isn't referenced by the field.
+      continue;
+    }
+
+    $instance = field_info_instance('node', $field_name, $type_name);
+    if (empty($instance['settings']['behaviors']['prepopulate']['status'])) {
+      // The field doesn't exist on the node type, or doesn't have prepopulate
+      // enabled.
+      continue;
+    }
+
+    if (!node_access('create', $type_name)) {
+      continue;
+    }
+
+    $names[$type_name] = node_type_get_name($type_name);
+  }
+
+  if (empty($names)) {
+    return;
+  }
+
+  // Sort names.
+  asort($names);
+
+  // Build links.
+  $options = array(
+    'query' => array($field_name => $entity_id) + drupal_get_destination(),
+  );
+
+  $items = array();
+  foreach ($names as $type => $name) {
+    $items[] = array('data' => l($name, 'node/add/' . str_replace('_', '-', $type), $options));
+  }
+
+  $element = array();
+  $element['entityreference_prepopulate'] = array(
+    '#theme' => 'item_list',
+    '#items' => $items,
+  );
+
+  return $element;
 }
