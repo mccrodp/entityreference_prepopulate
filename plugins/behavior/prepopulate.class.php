@@ -5,7 +5,7 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
   /**
    * Generate a settings form for this handler.
    */
-  public function settingsForm() {
+  public function settingsForm($field, $instance) {
     $form['action'] = array(
       '#type' => 'select',
       '#title' => t('Action'),
