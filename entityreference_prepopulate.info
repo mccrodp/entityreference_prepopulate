@@ -3,6 +3,3 @@ description = Prepopulate entity reference values from URL.
 core = 7.x
 package = Fields
 dependencies[] = entityreference
-
-; Our plugins.
-files[] = plugins/behavior/prepopulate.class.php
