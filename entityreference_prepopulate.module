@@ -170,11 +170,14 @@ function entityreference_prepopulate_field_access($op, $field, $entity_type, $en
  *   The field info array.
  * @param $instance
  *   The instance info array.
+ * @param $flat_array.
+ *   TRUE if the group IDs should be sent as a simple array. FALSE, if we need
+ *   to build array suited for field API's $items value.
  */
-function entityreference_prepopulate_get_values_from_url($field, $instance) {
+function entityreference_prepopulate_get_values_from_url($field, $instance, $flat_array = FALSE) {
   $cache = &drupal_static(__FUNCTION__, array());
   $field_name = $field['field_name'];
-  $identifier = $instance['entity_type'] . ':' . $instance['bundle'] . ':' . $field_name;
+  $identifier = $instance['entity_type'] . ':' . $instance['bundle'] . ':' . $field_name . ':' . $flat_array;
   if (isset($cache[$identifier])) {
     return $cache[$identifier];
   }
@@ -197,14 +200,14 @@ function entityreference_prepopulate_get_values_from_url($field, $instance) {
     return;
   }
 
-  // Check access to the provided entities,.
+  // Check access to the provided entities.
   $target_type = $field['settings']['target_type'];
   entity_load($target_type, $ids);
   $items = array();
   foreach ($ids as $id) {
     $entity = entity_load_single($target_type, $id);
     if (entity_access('view', $target_type, $entity)) {
-      $items[] = array('target_id' => $id);
+      $items[] = !$flat_array ? array('target_id' => $id) : $id;
     }
   }
   $cache[$identifier] = $items;
