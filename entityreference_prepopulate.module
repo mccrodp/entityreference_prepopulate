@@ -230,11 +230,19 @@ function entityreference_prepopulate_create_node_links($entity_type, $entity_id,
   $wrapper = entity_metadata_wrapper($entity_type, $entity_id);
   $field = field_info_field($field_name);
 
+  $entity = entity_load_single($entity_type, $entity_id);
+  list(,, $bundle) = entity_extract_ids($entity_type, $entity);
+
   $types = isset($types) ? $types : array_keys(node_type_get_types());
   $names = array();
   foreach ($types as $type_name) {
-    if (!empty($field['settings']['handler_settings']['target_bundles']) && !in_array($type_name, $field['settings']['handler_settings']['target_bundles'])) {
-      // The node isn't referenced by the field.
+    if ($field['settings']['target_type'] != $entity_type) {
+      // The entity type isn't referenced by the field.
+      continue;
+    }
+
+    if (!empty($field['settings']['handler_settings']['target_bundles']) && !in_array($bundle, $field['settings']['handler_settings']['target_bundles'])) {
+      // The entity bundle isn't referenced by the field.
       continue;
     }
 
