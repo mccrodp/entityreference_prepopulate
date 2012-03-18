@@ -105,6 +105,7 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
       if (!in_array($settings['fallback'], array('form_error', 'redirect')) && $settings['action'] != 'disable') {
         continue;
       }
+
       $field = $value['field'];
       if (entityreference_prepopulate_get_values_from_url($field, $instance)) {
         if ($settings['action'] == 'disable') {

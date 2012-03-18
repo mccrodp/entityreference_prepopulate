@@ -29,6 +29,7 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
 
     // Get list of permissions.
     $perms = array();
+    $perms[0] = t('- None -');
     foreach (module_list(FALSE, FALSE, TRUE) as $module) {
       // By keeping them keyed by module we can use optgroups with the
       // 'select' type.
