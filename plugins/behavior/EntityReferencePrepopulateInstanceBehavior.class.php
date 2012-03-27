@@ -10,7 +10,7 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
       '#type' => 'select',
       '#title' => t('Action'),
       '#options' => array(
-      'none' => t('Do nothing'),
+        'none' => t('Do nothing'),
         'hide' => t('Hide field'),
         'disable' => t('Disable field'),
       ),
