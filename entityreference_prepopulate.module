@@ -110,7 +110,7 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
         elseif ($settings['action'] == 'hide') {
           // We don't hide the field via hook_field_access(), as the
           // default value won't be set.
-          $form[$field_name][$lang]['#access'] = FALSE;
+          $form[$field_name]['#access'] = FALSE;
         }
       }
       elseif (in_array($settings['fallback'], array('form_error', 'redirect'))) {
