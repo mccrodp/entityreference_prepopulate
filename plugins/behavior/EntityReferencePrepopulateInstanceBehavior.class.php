@@ -36,7 +36,7 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
       // 'select' type.
       if ($permissions = module_invoke($module, 'permission')) {
         foreach ($permissions as $id => $permission) {
-          $perms[$module][$id] = $permission['title'];
+          $perms[$module][$id] = strip_tags($permission['title']);
         }
       }
     }
