@@ -210,7 +210,7 @@ function entityreference_prepopulate_get_values_from_url($field, $instance, $fla
   }
   $cache[$identifier] = FALSE;
 
-  if (empty($_GET[$field_name])) {
+  if (empty($_GET[$field_name]) || !is_string($_GET[$field_name])) {
     return;
   }
 
