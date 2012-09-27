@@ -6,6 +6,8 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
    * Generate a settings form for this handler.
    */
   public function settingsForm($field, $instance) {
+    $field_name = $field['field_name'];
+
     $form['action'] = array(
       '#type' => 'select',
       '#title' => t('Action'),
@@ -46,6 +48,19 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
       '#title' => t('Skip access permission'),
       '#description' => t('Set a permission that will not be affected by the fallback behavior.'),
       '#options' => $perms,
+    );
+
+    $description = t('Determine if values that should be prepopulated should "listen" to the OG-context.');
+
+    if ($disabled = !module_exists('og_context') || !og_is_group_audience_field($field_name)) {
+      $description .= '<br / >' . t('Organic groups integration: Enable OG-context and set "Entity selection mode" to "Organic groups" to enable this selection.');
+    }
+
+    $form['og_context'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('OG context'),
+      '#description' => $description,
+      '#disabled' => $disabled,
     );
     return $form;
   }

@@ -3,3 +3,5 @@ description = Prepopulate entity reference values from URL.
 core = 7.x
 package = Fields
 dependencies[] = entityreference
+
+files[] = entityreference_prepopulate.test
