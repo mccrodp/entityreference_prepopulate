@@ -31,7 +31,7 @@ function entityreference_prepopulate_field_create_instance($instance) {
 }
 
 /**
- * Implements hook_field_update_update().
+ * Implements hook_field_update_instance().
  */
 function entityreference_prepopulate_field_update_instance($instance, $prior_instance) {
   if (empty($instance['settings']['behaviors']['prepopulate'])) {
