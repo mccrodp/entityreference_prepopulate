@@ -99,9 +99,9 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
 
   if (!empty($form_state['triggering_element']['#ajax'])) {
     // We are inside AJAX, so values can't be taken from URL at the
-    // moment. however rebuild the form so the values are not takes form
-    // cache.
-    $form_state['rebuild'] = TRUE;
+    // moment, however don't cache the form so our "default_value_function"
+    // will be called again.
+    $form_state['no_cache'] = TRUE;
     return;
   }
 
