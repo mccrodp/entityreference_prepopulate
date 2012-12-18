@@ -92,10 +92,6 @@ function entityreference_prepopulate_og_field_default_value($entity_type, $entit
  */
 function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$form, &$form_state, $langcode) {
   list($id,,$bundle) = entity_extract_ids($entity_type, $entity);
-  if ($id) {
-    // Entity is already saved.
-    return;
-  }
 
   if (!empty($form_state['triggering_element']['#ajax'])) {
     // We are inside AJAX, so values can't be taken from URL at the
@@ -125,12 +121,16 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
       }
       $settings = $instance['settings']['behaviors']['prepopulate'];
 
-      if (!empty($settings['skip_perm']) && user_access($settings['skip_perm'])) {
+      if ((!empty($settings['skip_perm']) && user_access($settings['skip_perm'])) || ($id && !$settings['action_on_edit'])) {
+        // User has access to skip the action, or the entity is already
+        // saved, but "Apply action on edit", is disabled.
         continue;
       }
 
       $field = $value['field'];
-      if (entityreference_prepopulate_get_values($field, $instance)) {
+      if (entityreference_prepopulate_get_values($field, $instance) || ($id && $settings['action_on_edit'])) {
+        // New entity with prepopualte values, or an existing entity,
+        // we might need to disable/ hide the group-audience field.
         if ($settings['action'] == 'disable') {
           $form[$field_name][$lang]['#disabled'] = TRUE;
         }

@@ -18,6 +18,16 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
       ),
       '#description' => t('Action to take when prepopulating field with values via URL.'),
     );
+    $form['action_on_edit'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Apply action on edit'),
+      '#description' => t('Apply action when editing an existing entity.'),
+      '#states' => array(
+        'invisible' => array(
+          ':input[name="instance[settings][behaviors][prepopulate][action]"]' => array('value' => 'none'),
+        ),
+      ),
+    );
     $form['fallback'] = array(
       '#type' => 'select',
       '#title' => t('Fallback behaviour'),
@@ -62,6 +72,7 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
       '#description' => $description,
       '#disabled' => $disabled,
     );
+
     return $form;
   }
 }
