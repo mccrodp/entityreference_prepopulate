@@ -68,7 +68,7 @@ function entityreference_prepopulate_field_default_value($entity_type, $entity, 
  */
 function entityreference_prepopulate_og_field_default_value($entity_type, $entity, $field, $instance, $langcode) {
   if (empty($instance['field_mode'])) {
-    return;
+    return array();
   }
   if ($items = entityreference_prepopulate_get_values($field, $instance)) {
     // Filter out the items that don't match the field-mode.
