@@ -141,7 +141,7 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
         }
       }
       elseif (in_array($settings['fallback'], array('form_error', 'redirect'))) {
-        $message = t('Field @label must be populated via URL', array('@label' => $instance['label']));
+        $message = t('Field @label must be populated via URL.', array('@label' => $instance['label']));
         if ($settings['fallback'] == 'form_error') {
           form_error($form, $message);
         }
