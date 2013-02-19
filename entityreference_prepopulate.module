@@ -275,7 +275,7 @@ function entityreference_prepopulate_get_values_from_url($field, $instance, $fla
     $ids = explode(',', $_GET[$field_name]);
   }
 
-  if (!$ids) {
+  if (empty($ids)) {
     $cache[$identifier] = FALSE;
     return;
   }
