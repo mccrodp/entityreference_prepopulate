@@ -275,9 +275,15 @@ function entityreference_prepopulate_get_values_from_url($field, $instance, $fla
     $ids = explode(',', $_GET[$field_name]);
   }
 
+  if (!$ids) {
+    $cache[$identifier] = FALSE;
+    return;
+  }
+
   // Check if the IDs are valid, and get filter out the ones that are not valid.
   $handler = entityreference_get_selection_handler($field, $instance);
   if (!$ids = $handler->validateReferencableEntities($ids)) {
+    $cache[$identifier] = FALSE;
     return;
   }
 
