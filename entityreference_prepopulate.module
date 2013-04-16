@@ -91,8 +91,23 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
 
       // Store prepopulated values in the form state to make them persistent,
       // in case the form is rebuilt by AJAX requests.
-      if ($ids = entityreference_prepopulate_get_values($field, $instance)) {
-        $form_state['entityreference_prepopulate'][$instance['entity_type']][$instance['bundle']][$field['field_name']] = $ids;
+      // If the field belongs to OG, we need to get the values for the "default"
+      // and "admin" field modes.
+      $field_name = $field['field_name'];
+
+      if (module_exists('og') && og_is_group_audience_field($field_name)) {
+        $ids = array();
+        $field_modes = !user_access('administer group') ? array('default') : array('default', 'admin');
+        foreach ($field_modes as $field_mode) {
+          $instance['field_mode'] = $field_mode;
+          if ($og_ids = entityreference_prepopulate_get_values($field, $instance)) {
+            $ids = array_merge($ids, $og_ids);
+          }
+
+        }
+      }
+      elseif ($ids = entityreference_prepopulate_get_values($field, $instance)) {
+        $form_state['entityreference_prepopulate'][$instance['entity_type']][$instance['bundle']][$field_name] = $ids;
       }
 
       if ($ids || ($id && !empty($settings['action_on_edit']))) {
@@ -210,8 +225,11 @@ function entityreference_prepopulate_get_values($field, $instance, $validate = T
   );
 
   if (module_exists('og') && og_is_group_audience_field($field_name)) {
-    // Group audience field, but no field-mode provided.
-    $identifier[] = !empty($instance['field_mode']) ? $instance['field_mode'] : FALSE;
+    if (empty($instance['field_mode'])) {
+      // group audience field, but no field-mode provided.
+      return;
+    }
+    $identifier[] = $instance['field_mode'];
   }
 
   $identifier = implode(':', $identifier);
