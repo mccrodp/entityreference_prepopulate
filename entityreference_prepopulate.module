@@ -103,9 +103,10 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
         if ($settings['action'] == 'disable') {
           $form[$field_name][$lang]['#disabled'] = TRUE;
         }
-        elseif ($settings['action'] == 'hide') {
-          // We don't hide the field via hook_field_access(), as the
-          // default value won't be set.
+        elseif ($settings['action'] == 'hide' && !$id) {
+          // For new entities we don't hide the field via hook_field_access(),
+          // as the default value won't be set. We use hook_field_access() only
+          // on existing ones.
           $form[$field_name]['#access'] = FALSE;
         }
       }
@@ -138,20 +139,23 @@ function entityreference_prepopulate_field_access($op, $field, $entity_type, $en
   }
 
   list($id,,$bundle) = entity_extract_ids($entity_type, $entity);
-  if ($id) {
-    // Entity is already saved.
-    return;
-  }
-
   $instance = field_info_instance($entity_type, $field['field_name'], $bundle);
   if (empty($instance['settings']['behaviors']['prepopulate']['status'])) {
     return;
   }
 
   $settings = $instance['settings']['behaviors']['prepopulate'];
+
   if (!empty($settings['skip_perm']) && user_access($settings['skip_perm'])) {
     return;
   }
+
+  if ($id) {
+    // Entity is already saved. Return FALSE if we need to hide the field,
+    // otherwise ignore.
+    return $settings['action'] == 'hide' ? FALSE : NULL;
+  }
+
   $ids = entityreference_prepopulate_get_values($field, $instance);
 
   if (!$ids && $settings['fallback'] == 'hide') {
