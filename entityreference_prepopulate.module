@@ -150,10 +150,14 @@ function entityreference_prepopulate_field_access($op, $field, $entity_type, $en
     return;
   }
 
-  if ($id) {
-    // Entity is already saved. Return FALSE if we need to hide the field,
-    // otherwise ignore.
+  if ($id && empty($entity->is_new)) {
     return $settings['action'] == 'hide' ? FALSE : NULL;
+  }
+
+  if ($settings['action'] == 'hide') {
+    // If entity is already saved and not just inserted, deny access, otherwise
+    // ignore.
+    return $id && empty($entity->is_new) ? FALSE : NULL;
   }
 
   $ids = entityreference_prepopulate_get_values($field, $instance);
