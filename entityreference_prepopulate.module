@@ -151,7 +151,8 @@ function entityreference_prepopulate_field_access($op, $field, $entity_type, $en
   }
 
   if ($id && empty($entity->is_new)) {
-    return $settings['action'] == 'hide' ? FALSE : NULL;
+    // The field need to be hidden when editing the entity.
+    return $settings['action'] == 'hide' && $settings['action_on_edit'] ? FALSE : NULL;
   }
 
   if ($settings['action'] == 'hide') {

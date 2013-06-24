@@ -143,6 +143,7 @@ class EntityReferenceReferenceRemain extends DrupalWebTestCase {
     $this->changeInstanceSettings(array('action' => 'disable'));
 
     $this->drupalGet('node/add/' . $this->node1->type, $options);
+
     $xpath = $this->xpath('//input[@id="edit-node-ref-und-0-target-id" and @disabled="disabled" and @value="Referenced node (' . $this->node2->nid . ')"]');
     $this->assertTrue(!empty($xpath), 'The field is disabled and default value is set to the node 2.');
 
@@ -171,8 +172,16 @@ class EntityReferenceReferenceRemain extends DrupalWebTestCase {
     $this->assertTrue($this->getUrl() == url('<front>', array('absolute' => TRUE)), 'The redirect of due to non prepoulated value.');
 
     // Verify the basic edit.
-    $this->drupalPost('node/' . $this->node1->nid . '/edit', array('title' => 'Referencing node'), t('Save'));
+    $this->changeInstanceSettings(array(
+      'action' => 'hide',
+      'action_on_edit' => FALSE,
+    ));
+    $this->drupalGet('node/' . $this->node1->nid . '/edit');
 
+    $xpath = $this->xpath('//input[@id="edit-node-ref-und-0-target-id"]');
+    $this->assertTrue(!empty($xpath), "The node reference is visible to the user.");
+
+    $this->drupalPost('node/' . $this->node1->nid . '/edit', array('title' => 'Referencing node'), t('Save'));
     $this->verifyReferenceRemain();
 
     // Hide the field when editing.
@@ -181,15 +190,21 @@ class EntityReferenceReferenceRemain extends DrupalWebTestCase {
       'action_on_edit' => TRUE,
     ));
 
-    $this->drupalPost('node/' . $this->node1->nid . '/edit', array('title' => 'Referencing node'), t('Save'), $options);
+    $this->drupalGet('node/' . $this->node1->nid . '/edit');
+    $xpath = $this->xpath('//input[@id="edit-node-ref-und-0-target-id"]');
+    $this->assertTrue(empty($xpath), "The node reference is invisible to the user.");
 
+    $this->drupalPost('node/' . $this->node1->nid . '/edit', array('title' => 'Referencing node'), t('Save'), $options);
     $this->verifyReferenceRemain();
 
     // Disable the field.
     $this->changeInstanceSettings(array('action' => 'disable'));
 
-    $this->drupalPost('node/' . $this->node1->nid . '/edit', array('title' => 'Referencing node'), t('Save'));
+    $this->drupalGet('node/' . $this->node1->nid . '/edit');
+    $xpath = $this->xpath('//input[@id="edit-node-ref-und-0-target-id" and @disabled="disabled" and @value="Referenced node (' . $this->node2->nid . ')"]');
+    $this->assertTrue(!empty($xpath), 'The field is disabled and default value is set to the node 2.');
 
+    $this->drupalPost('node/' . $this->node1->nid . '/edit', array('title' => 'Referencing node'), t('Save'));
     $this->verifyReferenceRemain();
   }
 
