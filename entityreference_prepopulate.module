@@ -98,7 +98,7 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
       }
 
       if ($ids || ($id && !empty($settings['action_on_edit']))) {
-        // New entity with prepopualte values, or an existing entity,
+        // New entity with prepopulate values, or an existing entity,
         // we might need to disable/ hide the group-audience field.
         if ($settings['action'] == 'disable') {
           $form[$field_name][$lang]['#disabled'] = TRUE;
