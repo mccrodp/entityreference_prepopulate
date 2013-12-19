@@ -352,7 +352,7 @@ function entityreference_prepopulate_get_values_from_url($field, $instance) {
 function entityreference_prepopulate_get_values_from_og_context($field, $instance) {
   $field_name = $field['field_name'];
 
-  if (!module_exists('og_context') || !og_is_group_audience_field($field_name) || !$og_context = og_context()) {
+  if (!module_exists('og_context') || !$og_context = og_context()) {
     return;
   }
 
