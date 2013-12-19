@@ -110,7 +110,7 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
           $form[$field_name]['#access'] = FALSE;
         }
       }
-      elseif (in_array($settings['fallback'], array('form_error', 'redirect'))) {
+      elseif (in_array($settings['fallback'], array('form_error', 'redirect', 'hide'))) {
         $message = t('Field @label must be populated via URL.', array('@label' => $instance['label']));
         if ($settings['fallback'] == 'form_error') {
           form_error($form, $message);
@@ -118,6 +118,9 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
         elseif ($settings['fallback'] == 'redirect') {
           drupal_set_message($message, 'notice');
           drupal_goto();
+        }
+        elseif ($settings['fallback'] == 'hide') {
+          $form[$field_name]['#access'] = FALSE;
         }
       }
     }
