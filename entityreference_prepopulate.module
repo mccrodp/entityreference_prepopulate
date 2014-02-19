@@ -258,7 +258,7 @@ function entityreference_prepopulate_get_values($field, $instance, $validate = T
   }
 
   // Check if we have OG-context integration.
-  if (!$ids) {
+  if (!$ids && !empty($instance['settings']['behaviors']['prepopulate']['og_context'])) {
     $ids = entityreference_prepopulate_get_values_from_og_context($field, $instance);
   }
 
