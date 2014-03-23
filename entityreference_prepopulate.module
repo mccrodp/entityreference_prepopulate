@@ -66,7 +66,7 @@ function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$
 
   if (!empty($form_state['triggering_element']['#ajax'])) {
     // We are inside AJAX, so values can't be taken from URL at the
-    // moment.
+    // moment, so we prevent applying any "fallback" behaviors such as redirect.
     return;
   }
 
