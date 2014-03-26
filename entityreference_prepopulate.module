@@ -264,11 +264,7 @@ function entityreference_prepopulate_get_values($field, $instance, $validate = T
   $cache[$identifier] = $ids = array();
 
   // Check if we have cached values.
-  if (!$ids) {
-    $ids = entityreference_prepopulate_get_values_from_cache($field, $instance);
-  }
-
-  if (!$ids) {
+  if (!$ids = entityreference_prepopulate_get_values_from_cache($field, $instance)) {
     // Get the providers.
     $enabled_providers = !empty($instance['settings']['behaviors']['prepopulate']['providers']) ? array_filter($instance['settings']['behaviors']['prepopulate']['providers']) : array();
 
