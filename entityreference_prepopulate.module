@@ -62,7 +62,7 @@ function entityreference_prepopulate_field_update_instance($instance, $prior_ins
  * Implements hook_field_attach_form().
  */
 function entityreference_prepopulate_field_attach_form($entity_type, $entity, &$form, &$form_state, $langcode) {
-  list($id,,$bundle) = entity_extract_ids($entity_type, $entity);
+  list($id,, $bundle) = entity_extract_ids($entity_type, $entity);
 
   if (!empty($form_state['triggering_element']['#ajax'])) {
     // We are inside AJAX, so values can't be taken from URL at the
@@ -268,31 +268,33 @@ function entityreference_prepopulate_get_values($field, $instance, $validate = T
     $ids = entityreference_prepopulate_get_values_from_cache($field, $instance);
   }
 
-  // Get the providers.
-  $enabled_providers = !empty($instance['settings']['behaviors']['prepopulate']['providers']) ? array_filter($instance['settings']['behaviors']['prepopulate']['providers']) : array();
+  if (!$ids) {
+    // Get the providers.
+    $enabled_providers = !empty($instance['settings']['behaviors']['prepopulate']['providers']) ? array_filter($instance['settings']['behaviors']['prepopulate']['providers']) : array();
 
-  if (!$enabled_providers) {
-    // If the instance isn't updated yet, we assume the URL provider is enabled.
-    $enabled_providers += array('url' => TRUE);
-  }
-
-  // For backwards compatibility with version 1.4, we check the "og_context"
-  // property.
-  if (!empty($instance['settings']['behaviors']['prepopulate']['og_context'])) {
-    $enabled_providers += array('og_context' => TRUE);
-  }
-
-  $providers = entityreference_prepopulate_providers_info();
-  foreach (array_keys($enabled_providers) as $name) {
-    if (empty($providers[$name]) || !empty($providers[$name]['disabled'])) {
-      // Provider doesn't exist any more or is disabled.
-      continue;
+    if (!$enabled_providers) {
+      // If the instance isn't updated yet, we assume the URL provider is enabled.
+      $enabled_providers += array('url' => TRUE);
     }
-    $provider = $providers[$name];
-    $function = $provider['callback'];
-    if ($ids = $function($field, $instance)) {
-      // We found values, so we can break.
-      break;
+
+    // For backwards compatibility with version 1.4, we check the "og_context"
+    // property.
+    if (!empty($instance['settings']['behaviors']['prepopulate']['og_context'])) {
+      $enabled_providers += array('og_context' => TRUE);
+    }
+
+    $providers = entityreference_prepopulate_providers_info();
+    foreach (array_keys($enabled_providers) as $name) {
+      if (empty($providers[$name]) || !empty($providers[$name]['disabled'])) {
+        // Provider doesn't exist any more or is disabled.
+        continue;
+      }
+      $provider = $providers[$name];
+      $function = $provider['callback'];
+      if ($ids = $function($field, $instance)) {
+        // We found values, so we can break.
+        break;
+      }
     }
   }
 
