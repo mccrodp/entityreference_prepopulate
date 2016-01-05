@@ -1,0 +1,7 @@
+name: 'Entity reference prepopulate'
+description: 'Prepopulate entity reference values from URL.'
+core: 8.x
+package: Fields
+dependencies:
+  - entity_reference
+type: module

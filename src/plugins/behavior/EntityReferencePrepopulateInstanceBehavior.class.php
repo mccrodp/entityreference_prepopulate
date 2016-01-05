@@ -44,7 +44,7 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
     foreach (module_list(FALSE, FALSE, TRUE) as $module) {
       // By keeping them keyed by module we can use optgroups with the
       // 'select' type.
-      if ($permissions = module_invoke($module, 'permission')) {
+      if ($permissions = \Drupal::moduleHandler()->invoke($module, 'permission')) {
         foreach ($permissions as $id => $permission) {
           $perms[$module][$id] = strip_tags($permission['title']);
         }
@@ -68,7 +68,7 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
 
     // Sort providers by weight.
     $providers_names = !empty($instance['settings']['behaviors']['prepopulate']['providers']) ? array_keys($instance['settings']['behaviors']['prepopulate']['providers']) : array();
-    $providers_names = drupal_array_merge_deep($providers_names, array_keys($providers));
+    $providers_names = \Drupal\Component\Utility\NestedArray::mergeDeep($providers_names, array_keys($providers));
 
     $weight = 0;
     foreach ($providers_names as $name) {
@@ -86,8 +86,8 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
 
       $form['providers']['title'][$name] = array(
         '#type' => 'item',
-        '#markup' => filter_xss($provider['title']),
-        '#description' => filter_xss($provider['description']),
+        '#markup' => \Drupal\Component\Utility\Xss::filter($provider['title']),
+        '#description' => \Drupal\Component\Utility\Xss::filter($provider['description']),
       );
 
       if (!isset($instance['settings']['behaviors']['prepopulate']['providers'][$name])) {
@@ -131,14 +131,14 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
 function theme_entityreference_prepopulate_providers_table($variables) {
   $form = $variables['form'];
 
-  $provider_names = element_children($form['enabled']);
+  $provider_names = \Drupal\Core\Render\Element::children($form['enabled']);
 
   foreach ($provider_names as $provider_name) {
     $row = array(
       'data' => array(
-        drupal_render($form['title'][$provider_name]),
-        drupal_render($form['enabled'][$provider_name]),
-        drupal_render($form['weight'][$provider_name]),
+        \Drupal::service("renderer")->render($form['title'][$provider_name]),
+        \Drupal::service("renderer")->render($form['enabled'][$provider_name]),
+        \Drupal::service("renderer")->render($form['weight'][$provider_name]),
       ),
       'class' => array('draggable'),
     );
@@ -157,9 +157,25 @@ function theme_entityreference_prepopulate_providers_table($variables) {
     'attributes' => array('id' => 'table-providers'),
   );
 
-  $output = theme('table', $table_variables);
+  // @FIXME
+// theme() has been renamed to _theme() and should NEVER be called directly.
+// Calling _theme() directly can alter the expected output and potentially
+// introduce security issues (see https://www.drupal.org/node/2195739). You
+// should use renderable arrays instead.
+// 
+// 
+// @see https://www.drupal.org/node/2195739
+// $output = theme('table', $table_variables);
 
-  drupal_add_tabledrag('table-providers', 'order', 'sibling', 'provider-weight');
+
+  // @FIXME
+// TableDrag is now attached with the #tabledrag property of certain render
+// arrays. drupal_add_tabledrag() is now internal and should never be called directly.
+// 
+// 
+// @see https://www.drupal.org/node/2160571
+// drupal_add_tabledrag('table-providers', 'order', 'sibling', 'provider-weight');
+
   return $output;
 }
 
@@ -172,5 +188,5 @@ function entityreference_prepopulate_providers_validate($element, &$form_state) 
   // Sort the value by the weight.
   uasort($value, 'drupal_sort_weight');
 
-  form_set_value($element, $value, $form_state);
+  $form_state->setValueForElement($element, $value);
 }

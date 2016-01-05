@@ -1,0 +1,8 @@
+name: 'Entity reference prepopulate test module'
+description: 'Functionality to assist Entity reference prepopulate testing.'
+core: 8.x
+dependencies:
+ - entityreference_prepopulate
+ - og_context
+type: module
+hidden: TRUE

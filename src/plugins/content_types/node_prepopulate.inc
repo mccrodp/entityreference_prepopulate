@@ -45,7 +45,12 @@ function entityreference_prepopulate_node_prepopulate_content_type_edit_form($fo
   $options = array();
   $bundles = array();
   // Use CTools to get the best matching field name.
-  ctools_include('fields');
+  // @FIXME
+// Most CTools APIs have been moved into core.
+// 
+// @see https://www.drupal.org/node/2164623
+// ctools_include('fields');
+
   foreach (field_info_instances('node') as $node_type => $instances) {
     foreach ($instances as $field_name => $instance) {
       if (empty($instance['settings']['behaviors']['prepopulate']['status'])) {
@@ -78,7 +83,7 @@ function entityreference_prepopulate_node_prepopulate_content_type_edit_form($fo
   $options = array();
   foreach (node_type_get_types() as $type) {
     if (in_array($type->type, $bundles)) {
-      $options[$type->type] = check_plain($type->name);
+      $options[$type->type] = \Drupal\Component\Utility\Html::escape($type->name);
     }
   }
   $form['types'] = array(

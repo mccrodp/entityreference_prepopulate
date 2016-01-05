@@ -1,3 +1,5 @@
+**D8 version under development (non functional)**
+
 Description
 ===========
 Allows the contents of an "Entity Reference" field to be pre-populated by
