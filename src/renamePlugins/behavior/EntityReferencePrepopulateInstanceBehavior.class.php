@@ -1,5 +1,9 @@
 <?php
 
+/* @todo - look for alternative as behavior plugins do not exist (yet) in D8:
+    https://www.drupal.org/node/2615320
+ */
+
 class EntityReferencePrepopulateInstanceBehavior extends EntityReference_BehaviorHandler_Abstract {
 
   /**
